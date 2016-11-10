@@ -1,0 +1,33 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="//cdn.cleverbot.io/build/1.0/cleverbot.io.min.js"></script>
+<script>
+var recognition;
+var speech;
+var bot = new cleverbot('fPGcH7Cq6ghOyq1F','9AzCEDFKBUTxdRFPqFZhc9jBH5a9kgwI');
+bot.setNick("bot-diana");
+bot.create(function (err, session) {
+  // session is your session name, it will either be as you set it previously, or cleverbot.io will generate one for you
+	alert(session);
+  // Woo, you initialized cleverbot.io.  Insert further code here
+});
+
+window.onload=function(){
+var txtbox=document.getElementById("txt");
+recognition = new webkitSpeechRecognition();
+recognition.continuous = true;
+recognition.onresult = function(event) { 
+  speech=event.results[0][0].transcript;
+  bot.ask(speech, function (err, response) {
+  txtbox.innerHTML=response; // Will likely be: "Living in a lonely world"
+});
+}
+}
+function start(){
+recognition.stop();
+recognition.start();
+}
+
+</script>
+<div><h1 id="txt"></h1></div><br/>
+<button onclick='javascript:document.getElementById("txt").innerHTML=""'>CLEAR</button>
+<button onclick='start()'>OK DIANA</button>

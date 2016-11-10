@@ -1,0 +1,9 @@
+{
+	"eject cd": "echo 'thisis42'| sudo -kS eject",
+	"open firefox": "firefox",
+	"test": "echo 'Hello World'",
+	"show": "cat /var/www/html/diana/.commands",
+	"open browser": "google-chrome www.google.com",
+	"who am i": "whoami",
+	"ping": "man ping"
+}
