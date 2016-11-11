@@ -3,6 +3,7 @@
 <script src="annyang2.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script type="text/javascript" src="AsyncTask.min.js"></script>
+<script type="text/javascript" src="transliteration.min.js"></script>
 <script>
 var isLearning = false;
 var isLearningPassword = null;
@@ -118,6 +119,33 @@ function speak(speech){
 	window.speechSynthesis.speak(msg);
 }
 
+
+function getTemperature(q){
+	var asyncTask = new AsyncTask(
+	function(){},
+	{
+		'url': 'http://api.apixu.com/v1/current.json?key=03edffb8122e4957af7110843161111&q='+q,
+		'method': 'GET',
+		'data':{
+		}
+	},
+	function(s,a){
+		try{
+			a = JSON.parse(a);
+			var temp_c = a.current.temp_c;
+			var condition = a.current.condition.text;
+			var humidity = a.current.humidity;
+			speak("Weather forecast of "+q+". The temperature is "+temp_c+' degrees celcius. Sky looks to be '+condition+'. Humidity '+humidity);
+		}
+		catch(e){
+			speak("Can't retrieve weather. Sorry. Reason. "+e);
+		}
+	}
+	);
+	asyncTask.execute();
+}
+
+
 function showTimer(time){
 time/=1000;
 theTimer = setInterval(function(){
@@ -137,18 +165,35 @@ theTimer = setInterval(function(){
 		},1000);
 }
 
-function getTranslatedData(q){
+function getTranslatedData(q,lang){
 			$.ajax({
-			 	url: 'translate.php?q='+encodeURI(q.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"")),
+			 	url: 'translate.php?tl='+lang+'&q='+encodeURI(q.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"")),
 			 	success: function(e){
 			 		var str = e.substr(4);
-			 		str = str.substr(0,str.indexOf('"'))
-			 		speak(str);
+			 		str = str.substr(0,str.indexOf('"'));
+			 		if(lang==='hindi'){
+			 			transliterate(str);
+			 		}
+			 		else{
+			 			speak(str);
+			 		}
 			 	},
 			 	error: function(e){
 			 		alert("Error"+e);
 			 	}
 			 });
+		}
+
+
+function transliterate(q){
+			//google.load("language", "1");
+			//var arr = new Array(q);
+			//google.language.transliterate(arr, 'hi', 'en', function(str){
+				var str = transl(q);
+				str = str.replace(/kmbkht/g,'kumbakt');
+				str = str.replace(/nmste/g,'namaste');
+				speak(str);
+			//});
 		}
 
 function evaluateExpression(str){
@@ -290,7 +335,12 @@ speak('Hi I am Diana. How can I help you?');
 	'who is your master': function(){
 		speak('I was created by j0y.');
 	},
-	
+	'what is the weather :c *place': function(c,place){
+		if(c==="of"||c==="in"||c==="on") getTemperature(place);
+		else{
+
+		}
+	},
 	'play (a) *q song': function(q){
 		var songs = [
 	"http://hcmaslov.d-real.sci-nnov.ru/public/mp3/Michael%20Jackson/Michael%20Jackson%20'Billie%20Jean'.mp3",
@@ -332,8 +382,8 @@ speak('Hi I am Diana. How can I help you?');
 		speak("Setting timer for: "+num+" "+unit);
 		timerOn=true;
 	},
-	'Translate *q to french': function(q){
-					getTranslatedData(q);
+	'Translate *q to :lang': function(q,lang){
+					getTranslatedData(q,lang);
 		},
 	'set timer for :num :unit':function(num,unit){
 		var tmp=0;;
