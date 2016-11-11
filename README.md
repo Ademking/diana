@@ -1,5 +1,6 @@
 # diana
 __The pseudo artificial intelligence made in Javascript__
+
 Click [here](http://dbater.net/projects/diana/) for a live demo (__Note:__ Some functionalities might not work).
 
 Diana started out as a hobby project for me, and has turned out quite well.
