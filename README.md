@@ -29,6 +29,7 @@ __NOTE:__ Diana was never intended to be a fully fledged AI. It was more of a st
 - go to sleep
 - wake up (requires password, "mc4")
 - translate {text} to {language} (currently only hindi and french are supported. Hindi has some known bugs which I am trying to fix)
+- what is the weather of {place}
 
 
 Apart from that, diana also has a memory which allows it to remember stuff we teach it. The current memory for diana can be viewed [here](http://dbater.net/projects/diana/memory.txt)
