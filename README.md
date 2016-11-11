@@ -6,8 +6,9 @@ Click [here](http://dbater.net/projects/diana/) for a live demo (__Note:__ Some 
 Diana started out as a hobby project for me, and has turned out quite well.
 
 Diana uses 
-- [Annyang](https://www.talater.com/annyang/) - For it's speech recognition
-- [Javascript Speech Synthesis API](https://developers.google.com/web/updates/2014/01/Web-apps-that-talk-Introduction-to-the-Speech-Synthesis-API) - For TTS conversion
+- [Annyang](https://www.talater.com/annyang/) - For it's speech recognition.
+- [Javascript Speech Synthesis API](https://developers.google.com/web/updates/2014/01/Web-apps-that-talk-Introduction-to-the-Speech-Synthesis-API) - For TTS conversion.
+- [Cleverbot API](https://cleverbot.io/) - For responding to queries it does not understand yet.
 - And a bunch of small APIs and algorithms to achieve it's functionalities.
 
 __NOTE:__ Diana was never intended to be a fully fledged AI. It was more of a strict command following robot, made to test the complete power of Javascript.
