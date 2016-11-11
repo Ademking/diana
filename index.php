@@ -4,6 +4,9 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script type="text/javascript" src="AsyncTask.min.js"></script>
 <script type="text/javascript" src="transliteration.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//cdn.cleverbot.io/build/1.0/cleverbot.io.min.js"></script>
+<script type="text/javascript" src="CleverBot/Bot.js"></script>
 <script>
 var isLearning = false;
 var isLearningPassword = null;
@@ -455,7 +458,8 @@ speak('Hi I am Diana. How can I help you?');
 	// },
 	':start :is *key': function(start,is,key){
 		if(start!="who"&&start!="where"&&start!="what"){
-			speak(start+' '+is+' '+key+'? I did not understand that. Please speak again');
+			getAIResponse(start+' '+is+' '+key);	
+			//speak(start+' '+is+' '+key+'? I did not understand that. Please speak again');
 			return;
 		}
 		var mAsyncTask = new AsyncTask(
@@ -472,8 +476,9 @@ speak('Hi I am Diana. How can I help you?');
 			function(status,response){
 				if(status){
 					if(response == 'Null'){
-						speak('I dont know '+start+' '+is+' '+key+'. Should I Google it?');
-						qcmd = "wndw=window.open('http://www.google.com/search?q="+start+"+"+is+"+"+encodeURIComponent(key)+"','_blank');";
+						getAIResponse(start+" "+is+" "+key);
+						//speak('I dont know '+start+' '+is+' '+key+'. Should I Google it?');
+						//qcmd = "wndw=window.open('http://www.google.com/search?q="+start+"+"+is+"+"+encodeURIComponent(key)+"','_blank');";
 					}
 					else{
 						if(key=="your name"){
@@ -508,9 +513,11 @@ speak('Hi I am Diana. How can I help you?');
 		curses.forEach(function(item,index){
 			if(q.includes(item)) {
 				speak('Why are you swearing? Be polite.');
+				return;
 			}
 		});
-		speak(q+'? I did not understand that. Please speak again');
+
+		getAIResponse(q);
 	}
 	
   };
@@ -569,7 +576,13 @@ function animate(){
 		
 	},200);
 }
+
+
+function getAIResponse(q){
+	askCleverBot(q);
+}
 </script>
+
 <style>
 #sphere {
    width: 60px;
