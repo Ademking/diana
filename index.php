@@ -7,6 +7,11 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="//cdn.cleverbot.io/build/1.0/cleverbot.io.min.js"></script>
 <script type="text/javascript" src="CleverBot/Bot.js"></script>
+<script type="text/javascript" src="Webcam/Webcam.js"></script>
+<script type="text/javascript" src="Webcam/Picture.js"></script>
+<script type="text/javascript" src="Chobi/Chobi.js"></script>
+
+
 <script>
 var isLearning = false;
 var isLearningPassword = null;
@@ -20,6 +25,7 @@ var sleep = false;
 var client = "";
 var theTimer;
 var pwdreq = false;
+var imageMode = false;
 window.onkeypress=function(e){
 if(e.keyCode == 32){
 	if(isPlaying){
@@ -413,6 +419,97 @@ speak('Hi I am Diana. How can I help you?');
 			speak("Timer "+end+" successful");
 		}	
 	},
+	'image mode on': function(){
+		if(imageMode){
+			speak("Image mode is already on");
+			return;
+		}
+		initializeCamera();
+		imageMode = true;
+		speak("Image mode is on");
+	},
+	'image mode :off': function(off){
+		if(off==="off"||off==="of"){
+			if(!imageMode){
+				speak("Image mode is already off");
+				return;
+			}
+			resetCamera();
+			imageMode = false;
+			speak("Image mode is off");
+			return;
+		}
+		getAIResponse("image mode "+off);
+	},
+	'show preview': function(){
+		if(!imageMode){
+			speak("Image mode is not on");
+			return;
+		}
+		showPreview();
+		speak("Showing preview");
+	},
+	'hide preview': function(){
+		if(!imageMode){
+			speak("Image mode is not on");
+			return;
+		}
+		hidePreview();
+		speak("Preview hidden");
+	},
+	'take (a) picture': function(){
+		if(!imageMode){
+			speak("Image mode is not on");
+			return;
+		}
+		speak("Taking picture");
+		setTimeout(function(){
+			takePicture();
+			speak("Should I save it?");
+			qcmd = "savePicture();";
+		},2000);
+
+	},
+	'hide (the) picture': function(){
+		if(!imageMode){
+			speak("Image mode is not on");
+			return;
+		}
+		speak("Hiding picture");
+		hidePicture();
+	},
+	'make (the) picture *effect': function(effect){
+		if(!imageMode){
+			speak("Image mode is not on");
+			return;
+		}
+		effect = effect.toLowerCase();
+		speak("Making picture "+effect);
+		setTimeout(function(){
+			if(effect === "black and white"){
+				chobi.blackAndWhite().loadImageToCanvas();
+			}
+			else if(effect === "sepia"){
+				chobi.sepia.loadImageToCanvas();
+			}
+			else if(effect === "crayon"){
+				chobi.crayon().loadImageToCanvas();
+			}
+			else if(effect === "cartoon"){
+				chobi.cartoonify.loadImageToCanvas();
+			}
+			else if(effect === "vintage"){
+				chobi.vintage().loadImageToCanvas();
+			}
+			else{
+				speak("Effect not present right now. Sorry");
+			}
+		},2000);
+	},
+	'save (the) picture': function(){
+		speak("Saving picture");
+		savePicture();
+	},
 	'yes (please)':function(){
 		if(qcmd!=""){
 			eval(qcmd);
@@ -436,6 +533,9 @@ speak('Hi I am Diana. How can I help you?');
 	},
 	'no': function(){
 		speak('If you say so');
+		if(qcmd==="savePicture();"){
+			hidePicture();
+		}
 		qcmd="";
 	},
 	// 'command *q': function(q){
@@ -597,12 +697,26 @@ function getAIResponse(q){
 body{
 	margin: 0px;
 }
+#webcam-picture-container{
+	position: absolute;
+	z-index: 99;
+	display: none;
+}
+#saved-image-container{
+	position: absolute;
+	width: 320px;
+	height: 240px;
+	z-index: 100;
+}
 </style>
 </head>
 <body>
 <span id="minfo" style="background-color:#0a0a0a;position:fixed;z-index:-1000;width:100%;padding:1%;transition-duration:0.2s;color:#e5e5e5;text-align:center;font-weight:bold;font-family:arial;font-size:500%;margin-top:15%;"></span>
 <div style="position:absolute;width:100%;height:100%;"><img src="bg.png" style="width:100%;height:100%;" ></div>
 <span id="sphere" style="transition-duration:0.5s;border-radius:50%;padding:3%;background-color:#4444ff;cursor:none;border:1px solid black;box-shadow:0px 0px 15px #f0f0f0;" onmouseover="javascript:speak('That is my heart. Please do not touch it.');this.style.backgroundColor='#ff4444';this.style.boxShadow='0px 0px 15px #0a0a0a';" onmouseout="javascript:this.style.backgroundColor='#4444ff';this.style.boxShadow='0px 0px 15px #f0f0f0';" ></span>
+
+<div id="webcam-picture-container"></div>
+<canvas id="saved-image-container"></canvas>
 
 <div id="maudio"></div>
 <div id="alarm">
