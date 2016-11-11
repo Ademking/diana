@@ -594,6 +594,9 @@ function getAIResponse(q){
    margin-top: -(60/2)px;
    opacity: 0.7;
 }
+body{
+	margin: 0px;
+}
 </style>
 </head>
 <body>
